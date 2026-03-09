@@ -1,0 +1,23 @@
+@model Ezz_Store.PL.ViewModels.CategoryFormVM
+
+<form method="post" class="glass-panel p-4">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ParentCategoryId" class="form-label">Parent Category</label>
+        <select asp-for="ParentCategoryId" class="form-select"
+                asp-items="@(new SelectList(Model.ParentOptions, "Id", "Name"))">
+            <option value="">None</option>
+        </select>
+    </div>
+
+    <button class="btn btn-brand" type="submit">Save</button>
+    <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+</form>

@@ -1,0 +1,43 @@
+@model Ezz_Store.PL.ViewModels.ProductFormVM
+
+<form method="post" class="glass-panel p-4">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+
+    <div class="row g-3">
+        <div class="col-md-8">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="SKU" class="form-label"></label>
+            <input asp-for="SKU" class="form-control" />
+            <span asp-validation-for="SKU" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Price" class="form-label"></label>
+            <input asp-for="Price" class="form-control" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="StockQuantity" class="form-label"></label>
+            <input asp-for="StockQuantity" class="form-control" />
+            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="CategoryId" class="form-label"></label>
+            <select asp-for="CategoryId" class="form-select"
+                    asp-items="@(new SelectList(Model.CategoryOptions, "Id", "Name"))"></select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-check mt-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <button class="btn btn-brand mt-3" type="submit">Save</button>
+    <a class="btn btn-outline-light mt-3" asp-action="Index">Cancel</a>
+</form>

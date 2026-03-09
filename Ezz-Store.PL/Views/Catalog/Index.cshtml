@@ -1,0 +1,104 @@
+@model Ezz_Store.PL.ViewModels.ProductListVM
+@{
+    ViewData["Title"] = "Catalog";
+}
+
+<section class="catalog-shell">
+    <aside class="discovery-panel">
+        <p class="eyebrow">Discovery</p>
+        <a class="discover-item active" asp-action="Index">
+            <span>All Products</span>
+            <strong>@Model.Items.Count</strong>
+        </a>
+        @foreach (var category in Model.Categories.Take(6))
+        {
+            <a class="discover-item @(Model.CategoryId == category.Id ? "active" : null)"     asp-action="Index"
+                   asp-route-categoryId="@category.Id" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort">
+                <span>@category.Name</span>
+            </a>
+        }
+    </aside>
+
+    <div class="hero-panel hero-banner">
+        <p class="eyebrow">Spring Collection 2024</p>
+        <h1>The Future of <span>Creative Living</span></h1>
+        <p>Bold picks and modern essentials curated for your lifestyle.</p>
+        <a class="btn btn-brand btn-lg" href="#productsGrid">Explore Catalog</a>
+    </div>
+</section>
+
+<form method="get" class="glass-panel filter-grid mt-4">
+    <div>
+        <label class="form-label">Category</label>
+        <select name="categoryId" class="form-select">
+            <option value="">All categories</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id" selected="@(Model.CategoryId == category.Id)">@category.Name</option>
+            }
+        </select>
+    </div>
+    <div>
+        <label class="form-label">Search</label>
+        <input type="text" class="form-control" name="q" value="@Model.Query" placeholder="Search by name or SKU" />
+    </div>
+    <div>
+        <label class="form-label">Sort</label>
+        <select name="sort" class="form-select">
+            <option value="" selected="@(string.IsNullOrWhiteSpace(Model.Sort))">Price: low to high</option>
+            <option value="price_desc" selected="@(Model.Sort == "price_desc")">Price: high to low</option>
+            <option value="name" selected="@(Model.Sort == "name")">Name: A-Z</option>
+            <option value="name_desc" selected="@(Model.Sort == "name_desc")">Name: Z-A</option>
+        </select>
+    </div>
+    <div class="align-self-end">
+        <button class="btn btn-brand w-100" type="submit">Apply</button>
+    </div>
+</form>
+
+<div id="productsGrid" class="product-grid mt-4">
+    @if (!Model.Items.Any())
+    {
+        <div class="glass-panel p-4">No products match your filter.</div>
+    }
+    else
+    {
+        @foreach (var item in Model.Items)
+        {
+            <article class="product-card">
+                <div class="product-card-top">
+                    <span class="badge bg-info-subtle text-info-emphasis">@item.CategoryName</span>
+                    <span class="stock @(item.StockQuantity > 0 ? "in" : "out")">@(item.StockQuantity > 0 ? "In stock" :
+                                        "Out")</span>
+                    </div>
+                    <h3>@item.Name</h3>
+                    <p class="price">@item.Price.ToString("C")</p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a class="btn btn-outline-light flex-fill" asp-controller="Catalog" asp-action="Details"
+                           asp-route-id="@item.Id">Details</a>
+                        <form asp-controller="Cart" asp-action="Add" method="post" class="flex-fill">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@item.Id" />
+                            <button class="btn btn-brand w-100" type="submit" @(item.StockQuantity <= 0 ? "disabled" :
+                                                                                                                          null)>Add</button>
+                        </form>
+                    </div>
+                </article>
+            }
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination">
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.Page ? "active" : null)">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-categoryId="@Model.CategoryId"
+                           asp-route-q="@Model.Query" asp-route-sort="@Model.Sort">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }

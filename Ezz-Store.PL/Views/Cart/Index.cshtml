@@ -1,0 +1,60 @@
+@model Ezz_Store.PL.ViewModels.CartVM
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<h2 class="section-title">Your Cart</h2>
+
+@if (!Model.Items.Any())
+{
+    <div class="glass-panel p-4">
+        Cart is empty. <a asp-controller="Catalog" asp-action="Index">Browse catalog</a>
+    </div>
+}
+else
+{
+    <div class="glass-panel p-3">
+        <table class="table table-dark table-borderless align-middle">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.UnitPrice.ToString("C")</td>
+                    <td>
+                        <form asp-action="Update" method="post" class="d-flex gap-2">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="itemId" value="@item.ItemId" />
+                            <input type="number" min="1" max="@item.AvailableStock" name="qty" value="@item.Quantity" class="form-control form-control-sm" style="max-width:90px;" />
+                            <button class="btn btn-sm btn-outline-light" type="submit">Update</button>
+                        </form>
+                    </td>
+                    <td>@item.LineTotal.ToString("C")</td>
+                    <td>
+                        <form asp-action="Remove" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="itemId" value="@item.ItemId" />
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+        <div class="cart-summary">
+            <p>Items: <strong>@Model.TotalQuantity</strong></p>
+            <p>Subtotal: <strong>@Model.SubTotal.ToString("C")</strong></p>
+            <a class="btn btn-brand" asp-controller="Orders" asp-action="Checkout">Checkout</a>
+        </div>
+    </div>
+}

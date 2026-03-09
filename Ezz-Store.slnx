@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Ezz-Store.BLL/Ezz-Store.BLL.csproj" Id="4f12ab84-9553-43c0-9f91-be27c7ab4f0a" />
+  <Project Path="Ezz-Store.DAL/Ezz-Store.DAL.csproj" Id="9599daa8-909b-4b6c-a5e4-eba58879c361" />
+  <Project Path="Ezz-Store.PL/Ezz-Store.PL.csproj" Id="b2963b61-6560-49f6-a3a8-77cbb30b3b99" />
+</Solution>

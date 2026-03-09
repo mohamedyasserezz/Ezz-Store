@@ -1,0 +1,38 @@
+@model IEnumerable<Ezz_Store.BLL.Models.Admin.CategoryListItemDto>
+@{
+    ViewData["Title"] = "Admin Categories";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title mb-0">Categories</h2>
+    <a class="btn btn-brand" asp-action="Create">New Category</a>
+</div>
+
+<div class="glass-panel p-3">
+    <table class="table table-dark table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Parent</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.Name</td>
+                    <td>@(category.ParentName ?? "-")</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-light" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                        <form asp-action="Delete" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@category.Id" />
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

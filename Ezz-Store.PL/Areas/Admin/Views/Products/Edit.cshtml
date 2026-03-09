@@ -1,0 +1,11 @@
+@model Ezz_Store.PL.ViewModels.ProductFormVM
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2 class="section-title">Edit Product</h2>
+<partial name="_ProductForm" model="Model" />
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

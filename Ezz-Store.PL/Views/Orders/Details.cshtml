@@ -1,0 +1,44 @@
+@model Ezz_Store.PL.ViewModels.OrderDetailsVM
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="glass-panel p-4">
+    <div class="d-flex justify-content-between flex-wrap gap-3">
+        <div>
+            <h3>@Model.OrderNumber</h3>
+            <p class="muted">@Model.OrderDate.ToLocalTime().ToString("f")</p>
+            <p class="muted">Ship to: @Model.AddressText</p>
+        </div>
+        <div class="text-end">
+            <span class="status-badge">@Model.Status</span>
+            <p class="price mt-2">@Model.TotalAmount.ToString("C")</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <table class="table table-dark table-borderless">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Qty</th>
+                <th>Unit Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+                <td>@item.LineTotal.ToString("C")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a class="btn btn-outline-light" asp-action="Index">Back to orders</a>
+</div>

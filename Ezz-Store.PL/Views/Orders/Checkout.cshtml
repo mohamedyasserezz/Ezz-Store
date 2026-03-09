@@ -1,0 +1,65 @@
+@model Ezz_Store.PL.ViewModels.CheckoutVM
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2 class="section-title">Checkout</h2>
+
+<form method="post" class="checkout-grid">
+    @Html.AntiForgeryToken()
+    <section class="glass-panel p-3">
+        <h4>Shipping Address</h4>
+        @if (Model.AddressOptions.Any())
+        {
+            <div class="mb-3">
+                <label asp-for="SelectedAddressId" class="form-label"></label>
+                <select asp-for="SelectedAddressId" class="form-select" asp-items="@(new SelectList(Model.AddressOptions, "Id", "Label"))">
+                    <option value="">Use new address</option>
+                </select>
+            </div>
+        }
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label asp-for="Country" class="form-label"></label>
+                <input asp-for="Country" class="form-control" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="col-md-6">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="col-md-8">
+                <label asp-for="Street" class="form-label"></label>
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger"></span>
+            </div>
+            <div class="col-md-4">
+                <label asp-for="Zip" class="form-label"></label>
+                <input asp-for="Zip" class="form-control" />
+                <span asp-validation-for="Zip" class="text-danger"></span>
+            </div>
+        </div>
+    </section>
+
+    <section class="glass-panel p-3">
+        <h4>Order Summary</h4>
+        <ul class="summary-list">
+            @foreach (var item in Model.Cart.Items)
+            {
+                <li>
+                    <span>@item.ProductName x @item.Quantity</span>
+                    <strong>@item.LineTotal.ToString("C")</strong>
+                </li>
+            }
+        </ul>
+        <hr />
+        <p class="d-flex justify-content-between"><span>Total</span><strong>@Model.Cart.SubTotal.ToString("C")</strong></p>
+        <button class="btn btn-brand w-100" type="submit">Confirm Order</button>
+    </section>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

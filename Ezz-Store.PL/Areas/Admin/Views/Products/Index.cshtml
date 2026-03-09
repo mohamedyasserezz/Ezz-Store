@@ -1,0 +1,44 @@
+@model IEnumerable<Ezz_Store.BLL.Models.Admin.ProductListItemDto>
+@{
+    ViewData["Title"] = "Admin Products";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="section-title mb-0">Products</h2>
+    <a class="btn btn-brand" asp-action="Create">New Product</a>
+</div>
+
+<div class="glass-panel p-3">
+    <table class="table table-dark table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.Name</td>
+                    <td>@product.CategoryName</td>
+                    <td>@product.Price.ToString("C")</td>
+                    <td>@product.StockQuantity</td>
+                    <td>@(product.IsActive ? "Yes" : "No")</td>
+                    <td class="text-end">
+                        <a class="btn btn-sm btn-outline-light" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
+                        <form asp-action="Delete" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@product.Id" />
+                            <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
