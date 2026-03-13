@@ -78,7 +78,7 @@ namespace Ezz_Store.PL
 
             app.MapRazorPages();
 
-            await DbSeeder.SeedRolesAsync(app.Services);
+            await DbSeeder.SeedAsync(app.Services);
 
             await app.RunAsync();
         }
