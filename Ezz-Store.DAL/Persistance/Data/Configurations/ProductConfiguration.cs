@@ -1,4 +1,4 @@
-﻿using Ezz_Store.DAL.Entites;
+using Ezz_Store.DAL.Entites;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -28,6 +28,9 @@ namespace Ezz_Store.DAL.Persistance.Data.Configurations
             builder.Property(p => p.StockQuantity)
                    .IsRequired()
                    .HasDefaultValue(0);
+
+            builder.Property(p => p.ImageUrl)
+                   .HasMaxLength(500);
 
 
             builder.Property(p => p.IsActive)

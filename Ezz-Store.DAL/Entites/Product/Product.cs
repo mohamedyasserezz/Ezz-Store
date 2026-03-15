@@ -1,4 +1,4 @@
-﻿namespace Ezz_Store.DAL.Entites
+namespace Ezz_Store.DAL.Entites
 {
     public class Product
     {
@@ -8,6 +8,7 @@
         public string SKU { get; set; }  
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }
+        public string? ImageUrl { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public Category Category { get; set; }

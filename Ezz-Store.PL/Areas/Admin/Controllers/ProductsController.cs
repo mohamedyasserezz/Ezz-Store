@@ -48,7 +48,8 @@ public class ProductsController(IAdminProductService productService) : Controlle
             Price = model.Price,
             StockQuantity = model.StockQuantity,
             CategoryId = model.CategoryId,
-            IsActive = model.IsActive
+            IsActive = model.IsActive,
+            ImageUrl = model.ImageUrl
         });
         return RedirectToAction(nameof(Index));
     }
@@ -70,6 +71,7 @@ public class ProductsController(IAdminProductService productService) : Controlle
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             IsActive = product.IsActive,
+            ImageUrl = product.ImageUrl,
             CategoryId = product.CategoryId,
             CategoryOptions = (await productService.GetCategoryOptionsAsync())
                 .Select(c => new CategoryOptionVM { Id = c.Id, Name = c.Name })
@@ -97,7 +99,8 @@ public class ProductsController(IAdminProductService productService) : Controlle
             Price = model.Price,
             StockQuantity = model.StockQuantity,
             CategoryId = model.CategoryId,
-            IsActive = model.IsActive
+            IsActive = model.IsActive,
+            ImageUrl = model.ImageUrl
         });
 
         if (!updated)
@@ -112,7 +115,16 @@ public class ProductsController(IAdminProductService productService) : Controlle
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        await productService.DeleteAsync(id);
+        var result = await productService.DeleteAsync(id);
+
+        if (result.Succeeded)
+        {
+            TempData["Success"] = result.Message;
+        }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
 
         return RedirectToAction(nameof(Index));
     }

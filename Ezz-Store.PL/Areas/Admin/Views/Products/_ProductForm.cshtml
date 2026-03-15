@@ -31,6 +31,12 @@
                     asp-items="@(new SelectList(Model.CategoryOptions, "Id", "Name"))"></select>
             <span asp-validation-for="CategoryId" class="text-danger"></span>
         </div>
+        <div class="col-md-12">
+            <label asp-for="ImageUrl" class="form-label"></label>
+            <input asp-for="ImageUrl" class="form-control"
+                   placeholder="https://example.com/watch.jpg or /Images/products/watch.jpg" />
+            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+        </div>
     </div>
 
     <div class="form-check mt-3">
@@ -39,5 +45,5 @@
     </div>
 
     <button class="btn btn-brand mt-3" type="submit">Save</button>
-    <a class="btn btn-outline-light mt-3" asp-action="Index">Cancel</a>
+    <a class="btn btn-outline-secondary mt-3" asp-action="Index">Cancel</a>
 </form>
