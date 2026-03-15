@@ -27,18 +27,25 @@ else
             <tbody>
             @foreach (var item in Model.Items)
             {
-                <tr>
+                var unitPriceInv = item.UnitPrice.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                <tr data-unit-price="@unitPriceInv">
                     <td>@item.ProductName</td>
                     <td>@item.UnitPrice.ToString("C")</td>
                     <td>
-                        <form asp-action="Update" method="post" class="d-flex gap-2">
+                        <form asp-action="Update" method="post" class="d-flex gap-2 js-cart-update-form">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="itemId" value="@item.ItemId" />
-                            <input type="number" min="1" max="@item.AvailableStock" name="qty" value="@item.Quantity" class="form-control form-control-sm" style="max-width:90px;" />
-                            <button class="btn btn-sm btn-outline-light" type="submit">Update</button>
+                            <input type="number"
+                                   min="1"
+                                   max="@item.AvailableStock"
+                                   name="qty"
+                                   value="@item.Quantity"
+                                   class="form-control form-control-sm js-cart-qty"
+                                   style="max-width:90px;" />
+                            <button class="btn btn-sm btn-outline-light d-none" type="submit">Update</button>
                         </form>
                     </td>
-                    <td>@item.LineTotal.ToString("C")</td>
+                    <td><span class="js-cart-line-total">@item.LineTotal.ToString("C")</span></td>
                     <td>
                         <form asp-action="Remove" method="post">
                             @Html.AntiForgeryToken()
@@ -54,7 +61,41 @@ else
         <div class="cart-summary">
             <p>Items: <strong>@Model.TotalQuantity</strong></p>
             <p>Subtotal: <strong>@Model.SubTotal.ToString("C")</strong></p>
-            <a class="btn btn-brand" asp-controller="Orders" asp-action="Checkout">Checkout</a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="btn btn-brand" asp-controller="Orders" asp-action="Checkout">Checkout</a>
+            }
+            else
+            {
+                <p class="text-muted small mb-2">You must sign in to place an order.</p>
+                <a class="btn btn-brand" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Url.Action("Checkout", "Orders")">Sign in to Checkout</a>
+            }
         </div>
     </div>
+}
+
+@section Scripts {
+    <script>
+        (function () {
+            function formatMoney(num) {
+                return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(num);
+            }
+            var inputs = document.querySelectorAll('.js-cart-update-form .js-cart-qty');
+            inputs.forEach(function (input) {
+                function updateLineTotal() {
+                    var row = input.closest('tr');
+                    var totalEl = row && row.querySelector('.js-cart-line-total');
+                    var unitPrice = parseFloat(row.getAttribute('data-unit-price'), 10) || 0;
+                    var qty = parseInt(input.value, 10) || 1;
+                    if (totalEl) totalEl.textContent = formatMoney(unitPrice * qty);
+                }
+                input.addEventListener('input', updateLineTotal);
+                input.addEventListener('change', function () {
+                    updateLineTotal();
+                    var form = input.closest('form');
+                    if (form) form.submit();
+                });
+            });
+        })();
+    </script>
 }

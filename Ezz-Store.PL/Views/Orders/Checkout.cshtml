@@ -9,11 +9,13 @@
     @Html.AntiForgeryToken()
     <section class="glass-panel p-3">
         <h4>Shipping Address</h4>
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
         @if (Model.AddressOptions.Any())
         {
             <div class="mb-3">
                 <label asp-for="SelectedAddressId" class="form-label"></label>
-                <select asp-for="SelectedAddressId" class="form-select" asp-items="@(new SelectList(Model.AddressOptions, "Id", "Label"))">
+                <select asp-for="SelectedAddressId" class="form-select"
+                        asp-items="@(new SelectList(Model.AddressOptions, "Id", "Label"))">
                     <option value="">Use new address</option>
                 </select>
             </div>
@@ -55,7 +57,8 @@
             }
         </ul>
         <hr />
-        <p class="d-flex justify-content-between"><span>Total</span><strong>@Model.Cart.SubTotal.ToString("C")</strong></p>
+        <p class="d-flex justify-content-between"><span>Total</span><strong>@Model.Cart.SubTotal.ToString("C")</strong>
+        </p>
         <button class="btn btn-brand w-100" type="submit">Confirm Order</button>
     </section>
 </form>

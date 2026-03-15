@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -12,7 +12,6 @@
     rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Ezz_Store.PL.styles.css" asp-append-version="true" />
 </head>
 
 <body>
@@ -28,71 +27,81 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse" id="navbarMain">
-                    <div class="nav-search-wrap me-auto">
-                        <span class="nav-search-icon">&#128269;</span>
-                        <input class="nav-search" type="text" placeholder="Find your inspiration..." />
-                    </div>
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <form class="nav-search-wrap me-auto" asp-controller="Catalog" asp-action="Index" method="get">
+                            <span class="nav-search-icon">&#128269;</span>
+                            <input class="nav-search"                    type="text"             name="q"      value="@(Context.Request.Query["q"].ToString())"
+                                   placeholder="Search watches by name or SKU..." />
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="me-auto fw-semibold text-uppercase small">Admin Dashboard</div>
+                    }
                     <ul class="navbar-nav gap-lg-2 align-items-lg-center">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Index">Discover</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
-                        </li>
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button"
-                                   data-bs-toggle="dropdown">Admin</a>
-                                <ul class="dropdown-menu dropdown-menu-dark">
-                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Categories"
-                                               asp-action="Index">Categories</a></li>
-                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="Products"
-                                                   asp-action="Index">Products</a></li>
-                                            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Orders"
-                                                       asp-action="Index">Orders</a></li>
-                                            </ul>
-                                        </li>
-                                    }
-                                </ul>
-                                <div class="d-flex align-items-center gap-2 ms-lg-3">
-                                    <button id="themeToggle" class="btn btn-theme btn-sm" type="button">Dark</button>
-                                    <partial name="_LoginPartial" />
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
-                </header>
-
-                <div class="container">
-                    @if (TempData["Success"] is string success)
-                    {
-                        <div class="alert alert-success mt-3">@success</div>
-                    }
-                    @if (TempData["Error"] is string error)
-                    {
-                        <div class="alert alert-danger mt-3">@error</div>
-                    }
-                </div>
-
-                <main class="container pb-4">
-                    @RenderBody()
-                </main>
-
-                <footer class="footer-wrap">
-                    <div class="container d-flex justify-content-between flex-wrap gap-2">
-                        <span>&copy; 2026 Ezz Store</span>
-                        <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Categories"
+                                   asp-action="Index">Categories</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Products"
+                                   asp-action="Index">Products</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Admin" asp-controller="Orders" asp-action="Index">Orders</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Index">Discover</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
+                            </li>
+                        }
+                    </ul>
+                    <div class="d-flex align-items-center gap-2 ms-lg-3">
+                        <button id="themeToggle" class="btn btn-theme btn-sm" type="button">Dark</button>
+                        <partial name="_LoginPartial" />
                     </div>
-                </footer>
+                </div>
+            </div>
+        </nav>
+    </header>
 
-                <script src="~/lib/jquery/dist/jquery.min.js"></script>
-                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-                <script src="~/js/site.js" asp-append-version="true"></script>
-                @await RenderSectionAsync("Scripts", required: false)
-            </body>
+    <div class="container">
+        @if (TempData["Success"] is string success)
+        {
+            <div class="alert alert-success mt-3">@success</div>
+        }
+        @if (TempData["Error"] is string error)
+        {
+            <div class="alert alert-danger mt-3">@error</div>
+        }
+    </div>
 
-        </html>
+    <main class="container pb-4">
+        @RenderBody()
+    </main>
+
+    <footer class="footer-wrap">
+        <div class="container d-flex justify-content-between flex-wrap gap-2">
+            <span>&copy; 2026 Ezz Store</span>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

@@ -102,7 +102,16 @@ public class CategoriesController(IAdminCategoryService categoryService) : Contr
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-        await categoryService.DeleteAsync(id);
+        var result = await categoryService.DeleteAsync(id);
+
+        if (result.Succeeded)
+        {
+            TempData["Success"] = result.Message;
+        }
+        else
+        {
+            TempData["Error"] = result.Message;
+        }
 
         return RedirectToAction(nameof(Index));
     }

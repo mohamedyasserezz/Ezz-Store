@@ -1,23 +1,161 @@
 @model Ezz_Store.PL.ViewModels.ProductDetailsVM
 @{
-    ViewData["Title"] = "Product Details";
+    ViewData["Title"] = Model.Name;
+    var priceInvariant = Model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture);
 }
 
-<div class="glass-panel product-details">
-    <div>
-        <p class="eyebrow">@Model.CategoryName</p>
-        <h2>@Model.Name</h2>
-        <p class="muted">SKU: @Model.SKU</p>
-    </div>
-    <div class="product-detail-meta">
-        <p class="price">@Model.Price.ToString("C")</p>
-        <p class="muted">Stock: @Model.StockQuantity</p>
-        <form asp-controller="Cart" asp-action="Add" method="post">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="productId" value="@Model.Id" />
-            <button class="btn btn-brand" type="submit" @(Model.StockQuantity <= 0 ? "disabled" : null)>Add to
-                Cart</button>
-                <a class="btn btn-ghost ms-2" asp-controller="Catalog" asp-action="Index">Back</a>
-            </form>
+<section class="product-details-page">
+    <div class="product-details-hero glass-panel">
+        <div class="row g-4 align-items-center">
+            <div class="col-lg-6">
+                <div class="product-detail-media">
+                    @if (!string.IsNullOrWhiteSpace(Model.ImageUrl))
+                    {
+                        <img src="@Url.Content("~" + Model.ImageUrl)" alt="@Model.Name" class="product-detail-img" />
+                    }
+                    else
+                    {
+                        <div class="product-detail-img-placeholder">
+                            <span>@(Model.Name.Length > 0 ? Model.Name[0].ToString() : "?")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-6 product-detail-info">
+                <nav class="product-detail-breadcrumb">
+                    <a asp-controller="Catalog" asp-action="Index">Catalog</a>
+                    <span>/</span>
+                    <span>@Model.CategoryName</span>
+                    <span>/</span>
+                    <span class="current">@Model.Name</span>
+                </nav>
+                <span class="product-detail-pill">Signature Watch</span>
+                <h1 class="product-detail-title">@Model.Name</h1>
+                <p class="product-detail-sku">SKU: @Model.SKU</p>
+
+                <div class="product-detail-meta-row">
+                    <div>
+                        <p class="product-detail-meta-label">Price</p>
+                        <p class="product-detail-price-wrap">
+                            <span id="productDetailPrice" class="product-detail-price" data-base-price="@priceInvariant">@Model.Price.ToString("C")</span>
+                        </p>
+                    </div>
+                    <div class="text-end">
+                        <p class="product-detail-meta-label">Availability</p>
+                        <p class="stock-status @(Model.StockQuantity > 0 ? "in" : "out")">
+                            @(Model.StockQuantity > 0 ? "In stock" : "Out of stock")
+                        </p>
+                    </div>
+                </div>
+
+                <form asp-controller="Cart" asp-action="Add" method="post" class="product-detail-form" id="productDetailForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                    <div class="product-detail-actions">
+                        <div class="qty-stepper">
+                            <button type="button" class="qty-btn" id="qtyMinus" aria-label="Decrease">−</button>
+                            <input type="number" name="qty" id="productDetailQty" class="qty-input" min="1" max="@Model.StockQuantity" value="1" />
+                            <button type="button" class="qty-btn" id="qtyPlus" aria-label="Increase">+</button>
+                        </div>
+                        <button type="submit" class="btn btn-brand btn-add-cart" @(Model.StockQuantity <= 0 ? "disabled" : null)>Add to Cart</button>
+                    </div>
+                </form>
+                <p class="product-detail-stock-note">@Model.StockQuantity units available</p>
+                <a class="btn btn-ghost mt-2" asp-controller="Catalog" asp-action="Index">← Back to catalog</a>
+            </div>
         </div>
     </div>
+
+    <div class="glass-panel product-detail-tabs-wrap mt-4">
+        <ul class="nav nav-tabs product-detail-tabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" id="tab-desc" data-bs-toggle="tab" data-bs-target="#pane-desc" type="button" role="tab">Story & Description</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" id="tab-specs" data-bs-toggle="tab" data-bs-target="#pane-specs" type="button" role="tab">Specifications</button>
+            </li>
+        </ul>
+        <div class="tab-content product-detail-tab-content p-4">
+            <div class="tab-pane fade show active" id="pane-desc" role="tabpanel">
+                <p class="product-detail-quote">"A timeless piece crafted for those who appreciate precision, craftsmanship, and understated luxury."</p>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h5>Design & Craft</h5>
+                        <p class="text-muted">Premium materials, sculpted case, and a balanced dial—ideal for everyday wear and special occasions.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Movement & Performance</h5>
+                        <p class="text-muted">Reliable movement with strong accuracy and power reserve, plus water resistance for daily use.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="pane-specs" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <dl class="row mb-0 product-spec-list">
+                            <dt class="col-6">Case Diameter</dt>
+                            <dd class="col-6 text-end">42mm</dd>
+                            <dt class="col-6">Case Material</dt>
+                            <dd class="col-6 text-end">Stainless Steel</dd>
+                            <dt class="col-6">Water Resistance</dt>
+                            <dd class="col-6 text-end">5 ATM</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row mb-0 product-spec-list">
+                            <dt class="col-6">Strap</dt>
+                            <dd class="col-6 text-end">Leather</dd>
+                            <dt class="col-6">Movement</dt>
+                            <dd class="col-6 text-end">Quartz</dd>
+                            <dt class="col-6">Warranty</dt>
+                            <dd class="col-6 text-end">2 Years</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+(function () {
+    var priceEl = document.getElementById('productDetailPrice');
+    var qtyInput = document.getElementById('productDetailQty');
+    var qtyMinus = document.getElementById('qtyMinus');
+    var qtyPlus = document.getElementById('qtyPlus');
+    if (!priceEl || !qtyInput) return;
+
+    var basePrice = parseFloat(priceEl.getAttribute('data-base-price') || '0', 10);
+    var maxQty = parseInt(qtyInput.getAttribute('max') || '999', 10);
+
+    function formatMoney(num) {
+        return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(num);
+    }
+
+    function applyQty() {
+        var qty = parseInt(qtyInput.value, 10) || 1;
+        if (qty < 1) qty = 1;
+        if (maxQty > 0 && qty > maxQty) qty = maxQty;
+        qtyInput.value = qty;
+        priceEl.textContent = formatMoney(basePrice * qty);
+    }
+
+    qtyInput.addEventListener('input', applyQty);
+    qtyInput.addEventListener('change', applyQty);
+    qtyMinus && qtyMinus.addEventListener('click', function () {
+        var v = (parseInt(qtyInput.value, 10) || 1) - 1;
+        qtyInput.value = Math.max(1, v);
+        applyQty();
+    });
+    qtyPlus && qtyPlus.addEventListener('click', function () {
+        var v = (parseInt(qtyInput.value, 10) || 1) + 1;
+        qtyInput.value = maxQty > 0 ? Math.min(maxQty, v) : v;
+        applyQty();
+    });
+
+    applyQty();
+})();
+</script>
+}

@@ -18,6 +18,11 @@ public class OrdersController(
     [HttpGet("Checkout/Index")]
     public async Task<IActionResult> Checkout()
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Orders", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
         if (cart.Count == 0)
         {
@@ -51,6 +56,11 @@ public class OrdersController(
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Checkout(CheckoutVM model)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Orders", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
         if (cart.Count == 0)
         {
@@ -59,6 +69,49 @@ public class OrdersController(
         }
 
         var userId = userManager.GetUserId(User)!;
+
+        if (!model.SelectedAddressId.HasValue)
+        {
+            if (string.IsNullOrWhiteSpace(model.Country))
+            {
+                ModelState.AddModelError(nameof(model.Country), "Country is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.City))
+            {
+                ModelState.AddModelError(nameof(model.City), "City is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Street))
+            {
+                ModelState.AddModelError(nameof(model.Street), "Street is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Zip))
+            {
+                ModelState.AddModelError(nameof(model.Zip), "Zip is required.");
+            }
+        }
+
+        if (!ModelState.IsValid)
+        {
+            var invalidCheckoutPage = await orderService.GetCheckoutPageAsync(userId);
+            model.Cart = new CartVM
+            {
+                Items = cart.Select(i => new CartItemVM
+                {
+                    ItemId = i.ItemId,
+                    ProductId = i.ProductId,
+                    ProductName = i.ProductName,
+                    UnitPrice = i.UnitPrice,
+                    Quantity = i.Quantity,
+                    AvailableStock = i.AvailableStock
+                }).ToList()
+            };
+            model.AddressOptions = invalidCheckoutPage.AddressOptions.Select(a => new AddressOptionVM { Id = a.Id, Label = a.Label }).ToList();
+            return View(model);
+        }
+
         var request = new CheckoutRequestDto
         {
             SelectedAddressId = model.SelectedAddressId,
@@ -101,6 +154,11 @@ public class OrdersController(
     [HttpGet]
     public async Task<IActionResult> Index()
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Orders", new { area = "Admin" });
+        }
+
         var userId = userManager.GetUserId(User)!;
         var orders = await orderService.GetUserOrdersAsync(userId);
 
@@ -117,6 +175,11 @@ public class OrdersController(
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Orders", new { area = "Admin" });
+        }
+
         var userId = userManager.GetUserId(User)!;
         var order = await orderService.GetUserOrderDetailsAsync(userId, id);
 

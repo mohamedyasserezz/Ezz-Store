@@ -47,6 +47,12 @@ public class LoginModel(SignInManager<ApplicationUser> signInManager) : PageMode
         var result = await signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
+            var user = await signInManager.UserManager.FindByEmailAsync(Input.Email);
+            if (user is not null && await signInManager.UserManager.IsInRoleAsync(user, "Admin"))
+            {
+                return LocalRedirect("~/Admin/Products");
+            }
+
             return LocalRedirect(returnUrl);
         }
 

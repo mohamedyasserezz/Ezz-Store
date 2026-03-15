@@ -4,7 +4,14 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="d-flex align-items-center gap-2">
-        <a class="account-link" asp-controller="Orders" asp-action="Index">Account</a>
+        @if (User.IsInRole("Admin"))
+        {
+            <span class="account-link account-link-disabled" aria-disabled="true" title="Admin accounts cannot be modified">Account</span>
+        }
+        else
+        {
+            <a class="account-link" asp-area="" asp-controller="Account" asp-action="Index">Account</a>
+        }
         <form asp-area="Identity" asp-page="/Account/Logout"
               asp-route-returnUrl="@Url.Action("Index", "Catalog", new { area = "" })" method="post" class="m-0">
             <button type="submit" class="btn btn-ghost btn-sm">Logout</button>

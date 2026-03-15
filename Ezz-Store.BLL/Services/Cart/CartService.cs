@@ -7,7 +7,7 @@ namespace Ezz_Store.BLL.Services.Cart;
 
 public class CartService(IUnitOfWork unitOfWork) : ICartService
 {
-    public async Task<(bool Found, List<CartItemDto> Cart)> AddAsync(List<CartItemDto> cart, int productId)
+    public async Task<(bool Found, List<CartItemDto> Cart)> AddAsync(List<CartItemDto> cart, int productId, int quantity)
     {
         var product = await unitOfWork.GetRepository<Product>()
             .GetIQueryable()
@@ -21,6 +21,8 @@ public class CartService(IUnitOfWork unitOfWork) : ICartService
 
         var existing = cart.FirstOrDefault(i => i.ProductId == productId);
 
+        var safeQuantity = Math.Max(1, quantity);
+
         if (existing is null)
         {
             cart.Add(new CartItemDto
@@ -29,13 +31,13 @@ public class CartService(IUnitOfWork unitOfWork) : ICartService
                 ProductId = product.Id,
                 ProductName = product.Name,
                 UnitPrice = product.Price,
-                Quantity = 1,
+                Quantity = Math.Min(safeQuantity, product.StockQuantity),
                 AvailableStock = product.StockQuantity
             });
         }
         else
         {
-            existing.Quantity = Math.Min(existing.Quantity + 1, product.StockQuantity);
+            existing.Quantity = Math.Min(existing.Quantity + safeQuantity, product.StockQuantity);
             existing.AvailableStock = product.StockQuantity;
         }
 

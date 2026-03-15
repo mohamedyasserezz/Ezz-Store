@@ -1,0 +1,31 @@
+@model Ezz_Store.PL.ViewModels.ProfileVM
+@{
+    ViewData["Title"] = "Update profile";
+}
+
+<h2 class="section-title">Update your data</h2>
+
+<form method="post" class="glass-panel p-4" style="max-width: 480px;">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PhoneNumber" class="form-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-brand">Save changes</button>
+    <a class="btn btn-ghost ms-2" asp-action="Index">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

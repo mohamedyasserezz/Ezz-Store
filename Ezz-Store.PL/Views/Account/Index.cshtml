@@ -1,0 +1,26 @@
+@model Ezz_Store.PL.ViewModels.ProfileVM
+@{
+    ViewData["Title"] = "My Account";
+}
+
+<h2 class="section-title">My Account</h2>
+
+<div class="glass-panel p-4">
+    <dl class="row mb-0">
+        <dt class="col-sm-3">Full name</dt>
+        <dd class="col-sm-9">@Model.FullName</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        @if (!string.IsNullOrWhiteSpace(Model.PhoneNumber))
+        {
+            <dt class="col-sm-3">Phone</dt>
+            <dd class="col-sm-9">@Model.PhoneNumber</dd>
+        }
+    </dl>
+    <div class="mt-4">
+        <a class="btn btn-brand" asp-action="Edit">Update my data</a>
+        <a class="btn btn-ghost ms-2" asp-controller="Orders" asp-action="Index">My Orders</a>
+    </div>
+</div>

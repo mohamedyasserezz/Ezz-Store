@@ -10,6 +10,11 @@ public class CartController(ICartService cartService) : Controller
     [HttpGet]
     public IActionResult Index()
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
         return View(new CartVM
         {
@@ -28,10 +33,15 @@ public class CartController(ICartService cartService) : Controller
     [HttpPost("Cart/Add")]
     [HttpPost("Cart/Add/{productId:int}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Add(int productId)
+    public async Task<IActionResult> Add(int productId, int qty = 1, string? returnUrl = null)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
-        var result = await cartService.AddAsync(cart, productId);
+        var result = await cartService.AddAsync(cart, productId, qty);
         if (!result.Found)
         {
             return NotFound();
@@ -39,13 +49,24 @@ public class CartController(ICartService cartService) : Controller
 
         CartSessionHelper.SaveCart(HttpContext.Session, result.Cart);
         TempData["Success"] = "Product added to cart.";
-        return RedirectToAction(nameof(Index));
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction(nameof(Index), "Catalog");
     }
 
     [HttpPost("Cart/Update")]
     [ValidateAntiForgeryToken]
     public IActionResult Update(int itemId, int qty)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
         CartSessionHelper.SaveCart(HttpContext.Session, cartService.Update(cart, itemId, qty));
         return RedirectToAction(nameof(Index));
@@ -55,6 +76,11 @@ public class CartController(ICartService cartService) : Controller
     [ValidateAntiForgeryToken]
     public IActionResult Remove(int itemId)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var cart = CartSessionHelper.GetCart(HttpContext.Session);
         CartSessionHelper.SaveCart(HttpContext.Session, cartService.Remove(cart, itemId));
 
