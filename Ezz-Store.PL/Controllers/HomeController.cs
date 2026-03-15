@@ -8,11 +8,21 @@ namespace Ezz_Store.PL.Controllers
     {
         public IActionResult Index()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Products", new { area = "Admin" });
+            }
+
             return View();
         }
 
         public IActionResult Privacy()
         {
+            if (User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Index", "Products", new { area = "Admin" });
+            }
+
             return View();
         }
 

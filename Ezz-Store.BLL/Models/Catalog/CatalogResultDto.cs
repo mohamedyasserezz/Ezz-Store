@@ -15,6 +15,7 @@ public class ProductCardDto
     public decimal Price { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public int StockQuantity { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
 public class CategoryOptionDto
@@ -32,4 +33,5 @@ public class ProductDetailsDto
     public int StockQuantity { get; set; }
     public string CategoryName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    public string? ImageUrl { get; set; }
 }

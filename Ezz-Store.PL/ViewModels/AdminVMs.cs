@@ -35,6 +35,9 @@ public class ProductFormVM
 
     public bool IsActive { get; set; } = true;
 
+    [MaxLength(500)]
+    public string? ImageUrl { get; set; }
+
     [Required]
     public int CategoryId { get; set; }
 

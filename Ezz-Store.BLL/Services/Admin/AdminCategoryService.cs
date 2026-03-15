@@ -76,15 +76,59 @@ public class AdminCategoryService(IUnitOfWork unitOfWork) : IAdminCategoryServic
         return true;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<DeleteOperationResult> DeleteAsync(int id)
     {
-        var category = await unitOfWork.GetRepository<Category>().GetAsync(id);
+        var categoryRepo = unitOfWork.GetRepository<Category>();
+        var productRepo = unitOfWork.GetRepository<Product>();
+        var orderItemRepo = unitOfWork.GetRepository<OrderItem>();
+
+        var category = await categoryRepo.GetAsync(id);
         if (category is null)
         {
-            return;
+            return new DeleteOperationResult
+            {
+                Succeeded = false,
+                Message = "Category was not found."
+            };
         }
 
-        unitOfWork.GetRepository<Category>().Delete(category);
+        var productIds = await productRepo
+            .GetIQueryable()
+            .AsNoTracking()
+            .Where(p => p.CategoryId == id)
+            .Select(p => p.Id)
+            .ToListAsync();
+
+        if (productIds.Count > 0)
+        {
+            var hasPendingOrders = await orderItemRepo
+                .GetIQueryable()
+                .AsNoTracking()
+                .AnyAsync(oi => productIds.Contains(oi.ProductId) && oi.Order.Status == Status.pending);
+
+            if (hasPendingOrders)
+            {
+                return new DeleteOperationResult
+                {
+                    Succeeded = false,
+                    Message = "Cannot delete this category because one or more products belong to pending orders."
+                };
+            }
+
+            return new DeleteOperationResult
+            {
+                Succeeded = false,
+                Message = "Cannot delete this category because it still contains products."
+            };
+        }
+
+        categoryRepo.Delete(category);
         await unitOfWork.CompleteAsync();
+
+        return new DeleteOperationResult
+        {
+            Succeeded = true,
+            Message = "Category deleted successfully."
+        };
     }
 }

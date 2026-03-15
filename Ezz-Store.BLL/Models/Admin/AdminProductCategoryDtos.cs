@@ -22,6 +22,7 @@ public class ProductListItemDto
     public decimal Price { get; set; }
     public int StockQuantity { get; set; }
     public bool IsActive { get; set; }
+    public string? ImageUrl { get; set; }
 }
 
 public class ProductFormDto
@@ -33,4 +34,11 @@ public class ProductFormDto
     public int StockQuantity { get; set; }
     public bool IsActive { get; set; }
     public int CategoryId { get; set; }
+    public string? ImageUrl { get; set; }
+}
+
+public class DeleteOperationResult
+{
+    public bool Succeeded { get; init; }
+    public string Message { get; init; } = string.Empty;
 }

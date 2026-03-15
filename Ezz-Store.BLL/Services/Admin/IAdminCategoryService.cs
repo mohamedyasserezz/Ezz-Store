@@ -10,5 +10,5 @@ public interface IAdminCategoryService
     Task<List<CategoryOptionDto>> GetParentOptionsAsync(int? currentCategoryId = null);
     Task CreateAsync(CategoryFormDto model);
     Task<bool> UpdateAsync(CategoryFormDto model);
-    Task DeleteAsync(int id);
+    Task<DeleteOperationResult> DeleteAsync(int id);
 }

@@ -52,7 +52,8 @@ public class CatalogService(IUnitOfWork unitOfWork) : ICatalogService
                 Name = p.Name,
                 Price = p.Price,
                 CategoryName = p.Category.Name,
-                StockQuantity = p.StockQuantity
+                StockQuantity = p.StockQuantity,
+                ImageUrl = p.ImageUrl
             })
             .ToListAsync();
 
@@ -95,7 +96,8 @@ public class CatalogService(IUnitOfWork unitOfWork) : ICatalogService
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             CategoryName = product.Category.Name,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ImageUrl = product.ImageUrl
         };
     }
 }

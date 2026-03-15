@@ -22,7 +22,8 @@ public class AdminProductService(IUnitOfWork unitOfWork) : IAdminProductService
                 CategoryName = p.Category.Name,
                 Price = p.Price,
                 StockQuantity = p.StockQuantity,
-                IsActive = p.IsActive
+                IsActive = p.IsActive,
+                ImageUrl = p.ImageUrl
             })
             .ToListAsync();
     }
@@ -43,7 +44,8 @@ public class AdminProductService(IUnitOfWork unitOfWork) : IAdminProductService
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             IsActive = product.IsActive,
-            CategoryId = product.CategoryId
+            CategoryId = product.CategoryId,
+            ImageUrl = product.ImageUrl
         };
     }
 
@@ -67,6 +69,7 @@ public class AdminProductService(IUnitOfWork unitOfWork) : IAdminProductService
             StockQuantity = model.StockQuantity,
             CategoryId = model.CategoryId,
             IsActive = model.IsActive,
+            ImageUrl = string.IsNullOrWhiteSpace(model.ImageUrl) ? null : model.ImageUrl.Trim(),
             CreatedAt = DateTime.UtcNow
         });
 
@@ -87,21 +90,69 @@ public class AdminProductService(IUnitOfWork unitOfWork) : IAdminProductService
         product.StockQuantity = model.StockQuantity;
         product.CategoryId = model.CategoryId;
         product.IsActive = model.IsActive;
+        if (!string.IsNullOrWhiteSpace(model.ImageUrl))
+        {
+            product.ImageUrl = model.ImageUrl.Trim();
+        }
 
         unitOfWork.GetRepository<Product>().Update(product);
         await unitOfWork.CompleteAsync();
         return true;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task<DeleteOperationResult> DeleteAsync(int id)
     {
-        var product = await unitOfWork.GetRepository<Product>().GetAsync(id);
-        if (product is null)
+        var productRepo = unitOfWork.GetRepository<Product>();
+        var orderItemRepo = unitOfWork.GetRepository<OrderItem>();
+
+        var hasPendingOrders = await orderItemRepo
+            .GetIQueryable()
+            .AsNoTracking()
+            .AnyAsync(oi => oi.ProductId == id && oi.Order.Status == Status.pending);
+
+        if (hasPendingOrders)
         {
-            return;
+            return new DeleteOperationResult
+            {
+                Succeeded = false,
+                Message = "Cannot delete this product because it is used by a pending order."
+            };
         }
 
-        unitOfWork.GetRepository<Product>().Delete(product);
+        var product = await productRepo
+            .GetIQueryable()
+            .Include(p => p.OrderItems)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (product is null)
+        {
+            return new DeleteOperationResult
+            {
+                Succeeded = false,
+                Message = "Product was not found."
+            };
+        }
+
+        if (product.OrderItems is not null && product.OrderItems.Any())
+        {
+            product.IsActive = false;
+            productRepo.Update(product);
+
+            await unitOfWork.CompleteAsync();
+            return new DeleteOperationResult
+            {
+                Succeeded = true,
+                Message = "Product is linked to previous orders, so it was deactivated instead of deleted."
+            };
+        }
+
+        productRepo.Delete(product);
         await unitOfWork.CompleteAsync();
+
+        return new DeleteOperationResult
+        {
+            Succeeded = true,
+            Message = "Product deleted successfully."
+        };
     }
 }

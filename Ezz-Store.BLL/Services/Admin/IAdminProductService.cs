@@ -10,5 +10,5 @@ public interface IAdminProductService
     Task<List<CategoryOptionDto>> GetCategoryOptionsAsync();
     Task CreateAsync(ProductFormDto model);
     Task<bool> UpdateAsync(ProductFormDto model);
-    Task DeleteAsync(int id);
+    Task<DeleteOperationResult> DeleteAsync(int id);
 }

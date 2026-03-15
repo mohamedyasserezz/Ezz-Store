@@ -24,7 +24,7 @@
                     <td>@category.Name</td>
                     <td>@(category.ParentName ?? "-")</td>
                     <td class="text-end">
-                        <a class="btn btn-sm btn-outline-light" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@category.Id">Edit</a>
                         <form asp-action="Delete" method="post" class="d-inline">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@category.Id" />

@@ -1,4 +1,5 @@
 using Ezz_Store.BLL.Services.Catalog;
+using Ezz_Store.PL.Helpers;
 using Ezz_Store.PL.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,11 @@ public class CatalogController(ICatalogService catalogService) : Controller
     [HttpGet]
     public async Task<IActionResult> Index(int? categoryId, string? q, string? sort, int page = 1)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var result = await catalogService.GetCatalogAsync(categoryId, q, sort, page);
 
         return View(new ProductListVM
@@ -19,7 +25,8 @@ public class CatalogController(ICatalogService catalogService) : Controller
                 Name = p.Name,
                 Price = p.Price,
                 CategoryName = p.CategoryName,
-                StockQuantity = p.StockQuantity
+                StockQuantity = p.StockQuantity,
+                ImageUrl = ProductImageHelper.GetDisplayImageUrl(p.ImageUrl, p.Id)
             }).ToList(),
             Categories = result.Categories.Select(c => new CategoryOptionVM { Id = c.Id, Name = c.Name }).ToList(),
             CategoryId = categoryId,
@@ -33,6 +40,11 @@ public class CatalogController(ICatalogService catalogService) : Controller
     [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
+        if (User.IsInRole("Admin"))
+        {
+            return RedirectToAction("Index", "Products", new { area = "Admin" });
+        }
+
         var product = await catalogService.GetDetailsAsync(id);
 
         if (product is null)
@@ -48,7 +60,8 @@ public class CatalogController(ICatalogService catalogService) : Controller
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             CategoryName = product.CategoryName,
-            IsActive = product.IsActive
+            IsActive = product.IsActive,
+            ImageUrl = ProductImageHelper.GetDisplayImageUrl(product.ImageUrl, product.Id)
         });
     }
 }
