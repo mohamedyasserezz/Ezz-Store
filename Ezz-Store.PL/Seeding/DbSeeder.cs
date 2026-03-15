@@ -50,11 +50,11 @@ public static class DbSeeder
 
         var defaultCategories = new List<Category>
         {
-            new() { Name = "Electronics" },
-            new() { Name = "Fashion" },
-            new() { Name = "Home & Kitchen" },
-            new() { Name = "Books" },
-            new() { Name = "Accessories" }
+            new() { Name = "Men's Watches" },
+            new() { Name = "Women's Watches" },
+            new() { Name = "Smart Watches" },
+            new() { Name = "Luxury Watches" },
+            new() { Name = "Sport Watches" }
         };
 
         if (!await dbContext.Categories.AnyAsync())
@@ -87,107 +87,131 @@ public static class DbSeeder
 
         var categoryByName = existingCategories.ToDictionary(category => category.Name, category => category.Id, StringComparer.OrdinalIgnoreCase);
 
+        var productImages = new[]
+        {
+            "/Images/products/Men watch1.jpg",
+            "/Images/products/Men watch2.jpg",
+            "/Images/products/woment watch1.png",
+            "/Images/products/women watch2.jpg",
+            "/Images/products/smart watch1.jpg",
+            "/Images/products/smart watch2.jpg",
+            "/Images/products/Luxury watch1.jpg",
+            "/Images/products/Luxury watch2.jpg",
+            "/Images/products/sprort watch1.jpg",
+            "/Images/products/sprort watch2.jpg"
+        };
+
         var products = new List<Product>
         {
             new()
             {
-                Name = "Noise Cancelling Headphones",
-                SKU = "ELEC-1001",
+                Name = "Chrono Classic Men's Watch",
+                SKU = "MEN-1001",
                 Price = 2499.00m,
                 StockQuantity = 18,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Electronics"]
+                CategoryId = categoryByName["Men's Watches"],
+                ImageUrl = productImages[0]
             },
             new()
             {
-                Name = "Mechanical Keyboard",
-                SKU = "ELEC-1002",
-                Price = 1799.00m,
-                StockQuantity = 24,
+                Name = "Midnight Steel Men's Watch",
+                SKU = "MEN-1002",
+                Price = 1899.00m,
+                StockQuantity = 22,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Electronics"]
+                CategoryId = categoryByName["Men's Watches"],
+                ImageUrl = productImages[1]
             },
             new()
             {
-                Name = "Smart Watch",
-                SKU = "ELEC-1003",
-                Price = 3299.00m,
-                StockQuantity = 12,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Electronics"]
-            },
-            new()
-            {
-                Name = "Classic Denim Jacket",
-                SKU = "FASH-2001",
-                Price = 1299.00m,
-                StockQuantity = 20,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Fashion"]
-            },
-            new()
-            {
-                Name = "Cotton Crew T-Shirt",
-                SKU = "FASH-2002",
-                Price = 349.00m,
-                StockQuantity = 50,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Fashion"]
-            },
-            new()
-            {
-                Name = "Ceramic Dinner Set",
-                SKU = "HOME-3001",
-                Price = 899.00m,
+                Name = "Rose Gold Women's Watch",
+                SKU = "WOM-2001",
+                Price = 2199.00m,
                 StockQuantity = 16,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Home & Kitchen"]
+                CategoryId = categoryByName["Women's Watches"],
+                ImageUrl = productImages[2]
             },
             new()
             {
-                Name = "Stainless Steel Bottle",
-                SKU = "HOME-3002",
-                Price = 275.00m,
-                StockQuantity = 40,
+                Name = "Minimal Leather Women's Watch",
+                SKU = "WOM-2002",
+                Price = 1599.00m,
+                StockQuantity = 24,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Home & Kitchen"]
+                CategoryId = categoryByName["Women's Watches"],
+                ImageUrl = productImages[3]
             },
             new()
             {
-                Name = "Clean Architecture",
-                SKU = "BOOK-4001",
-                Price = 650.00m,
+                Name = "Active Pro Smart Watch",
+                SKU = "SMART-3001",
+                Price = 3299.00m,
+                StockQuantity = 20,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = categoryByName["Smart Watches"],
+                ImageUrl = productImages[4]
+            },
+            new()
+            {
+                Name = "Urban Fit Smart Watch",
+                SKU = "SMART-3002",
+                Price = 2899.00m,
+                StockQuantity = 25,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = categoryByName["Smart Watches"],
+                ImageUrl = productImages[5]
+            },
+            new()
+            {
+                Name = "Heritage Automatic Luxury Watch",
+                SKU = "LUX-4001",
+                Price = 7499.00m,
+                StockQuantity = 8,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = categoryByName["Luxury Watches"],
+                ImageUrl = productImages[6]
+            },
+            new()
+            {
+                Name = "Diamond Dial Luxury Watch",
+                SKU = "LUX-4002",
+                Price = 8999.00m,
+                StockQuantity = 5,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = categoryByName["Luxury Watches"],
+                ImageUrl = productImages[7]
+            },
+            new()
+            {
+                Name = "Trail Runner Sport Watch",
+                SKU = "SPORT-5001",
+                Price = 1999.00m,
+                StockQuantity = 30,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                CategoryId = categoryByName["Sport Watches"],
+                ImageUrl = productImages[8]
+            },
+            new()
+            {
+                Name = "Ocean Diver Sport Watch",
+                SKU = "SPORT-5002",
+                Price = 2799.00m,
                 StockQuantity = 14,
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Books"]
-            },
-            new()
-            {
-                Name = "Domain-Driven Design Distilled",
-                SKU = "BOOK-4002",
-                Price = 720.00m,
-                StockQuantity = 10,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Books"]
-            },
-            new()
-            {
-                Name = "Leather Card Holder",
-                SKU = "ACCS-5001",
-                Price = 415.00m,
-                StockQuantity = 28,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                CategoryId = categoryByName["Accessories"]
+                CategoryId = categoryByName["Sport Watches"],
+                ImageUrl = productImages[9]
             }
         };
 
